@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Kelola Menu - {{ rapat.judul }}</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Back Button -->
+        <a href="{% url 'rapat_detail' rapat.slug %}" class="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6 font-medium">
+            ← Kembali ke Detail Rapat
+        </a>
+
+        <!-- Header -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">Kelola Menu</h1>
+            <p class="text-gray-600">{{ rapat.judul }}</p>
+        </div>
+
+        <!-- Tambah Menu -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Tambah Menu Baru</h2>
+            <form method="POST" class="flex gap-4">
+                {% csrf_token %}
+                <input 
+                    type="text" 
+                    name="nama" 
+                    placeholder="Nama menu..." 
+                    required
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <button 
+                    type="submit"
+                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition"
+                >
+                    Tambah
+                </button>
+            </form>
+        </div>
+
+        <!-- List Menu -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                Daftar Menu ({{ menus.count }})
+            </h2>
+
+            {% if menus %}
+                <div class="space-y-3">
+                    {% for menu in menus %}
+                    <div id="menu-{{ menu.id }}" class="p-4 border border-gray-200 rounded-lg">
+                        <!-- View Mode -->
+                        <div class="view-mode flex items-center justify-between">
+                            <span class="text-base font-medium text-gray-800">{{ menu.nama }}</span>
+                            <div class="flex gap-2">
+                                <button 
+                                    onclick="toggleEdit({{ menu.id }})"
+                                    class="px-3 py-1.5 border border-gray-400 hover:bg-gray-50 text-gray-700 rounded-md transition text-sm">
+                                    Edit
+                                </button>
+                                <a href="{% url 'menu_delete' rapat.slug menu.id %}" 
+                                   class="px-3 py-1.5 border border-gray-400 hover:bg-gray-50 text-gray-700 rounded-md transition text-sm">
+                                    Hapus
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Edit Mode (hidden by default) -->
+                        <form method="POST" action="{% url 'menu_edit' rapat.slug menu.id %}" class="edit-mode hidden">
+                            {% csrf_token %}
+                            <div class="flex gap-2">
+                                <input 
+                                    type="text" 
+                                    name="nama" 
+                                    value="{{ menu.nama }}" 
+                                    required
+                                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                >
+                                <button 
+                                    type="submit"
+                                    class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition text-sm">
+                                    Simpan
+                                </button>
+                                <button 
+                                    type="button"
+                                    onclick="toggleEdit({{ menu.id }})"
+                                    class="px-3 py-2 border border-gray-400 hover:bg-gray-50 text-gray-700 font-medium rounded-md transition text-sm">
+                                    Batal
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-8">
+                    <p class="text-gray-500">Belum ada menu. Tambahkan menu pertamamu!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleEdit(menuId) {
+    const menuDiv = document.getElementById('menu-' + menuId);
+    const viewMode = menuDiv.querySelector('.view-mode');
+    const editMode = menuDiv.querySelector('.edit-mode');
+    
+    viewMode.classList.toggle('hidden');
+    editMode.classList.toggle('hidden');
+}
+</script>
+{% endblock content %}

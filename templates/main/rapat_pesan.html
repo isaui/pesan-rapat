@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Pesan Makanan - {{ rapat.judul }}</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Back Button -->
+        <a href="{% url 'rapat_detail' rapat.slug %}" class="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6 font-medium">
+            ← Kembali ke Detail Rapat
+        </a>
+
+        <!-- Header -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">Pesan Makanan</h1>
+            <p class="text-gray-600">{{ rapat.judul }}</p>
+        </div>
+
+        <!-- Form Pemesanan -->
+        <form method="POST" class="bg-white border border-gray-200 rounded-lg p-6">
+            {% csrf_token %}
+            
+            <!-- Nama Pemesan -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Nama Pemesan</label>
+                <input 
+                    type="text" 
+                    name="nama_pemesan" 
+                    placeholder="Masukkan nama kamu..." 
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+
+            <!-- Menu -->
+            {% if menus %}
+            <div class="mb-6">
+                <h2 class="text-base font-semibold text-gray-900 mb-3">Pilih Menu</h2>
+                <div class="space-y-4">
+                    {% for menu in menus %}
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-800 font-semibold">{{ menu.nama }}</span>
+                            <div class="flex items-center gap-3">
+                                <button type="button" onclick="decreaseQty('menu_{{ menu.id }}')" 
+                                        class="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-lg font-bold transition">
+                                    −
+                                </button>
+                                <input 
+                                    type="number" 
+                                    id="menu_{{ menu.id }}" 
+                                    name="menu_{{ menu.id }}" 
+                                    value="0" 
+                                    min="0" 
+                                    class="w-16 text-center border-2 border-gray-200 rounded-lg py-2 font-semibold"
+                                    readonly
+                                >
+                                <button type="button" onclick="increaseQty('menu_{{ menu.id }}')" 
+                                        class="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-bold transition">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="mb-8 p-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl">
+                <p class="text-yellow-800">⚠️ Belum ada menu. Silakan kelola menu terlebih dahulu.</p>
+            </div>
+            {% endif %}
+
+            <!-- Custom Request -->
+            <div class="mb-6">
+                <h2 class="text-base font-semibold text-gray-900 mb-3">Custom Request (Opsional)</h2>
+                <div class="space-y-4">
+                    <input 
+                        type="text" 
+                        name="custom_request" 
+                        placeholder="Contoh: Nasi goreng tanpa pete" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    <div class="flex items-center gap-3">
+                        <span class="text-gray-700 font-semibold">Jumlah:</span>
+                        <button type="button" onclick="decreaseQty('custom_quantity')" 
+                                class="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-lg font-bold transition">
+                            −
+                        </button>
+                        <input 
+                            type="number" 
+                            id="custom_quantity" 
+                            name="custom_quantity" 
+                            value="0" 
+                            min="0" 
+                            class="w-16 text-center border-2 border-gray-200 rounded-lg py-2 font-semibold"
+                            readonly
+                        >
+                        <button type="button" onclick="increaseQty('custom_quantity')" 
+                                class="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-bold transition">
+                            +
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex gap-3">
+                <button 
+                    type="submit"
+                    class="flex-1 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition"
+                >
+                    Kirim Pesanan
+                </button>
+                <a href="{% url 'rapat_detail' rapat.slug %}" 
+                   class="px-6 py-2 border border-gray-400 hover:bg-gray-50 text-gray-700 font-medium rounded-md transition">
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function increaseQty(id) {
+    const input = document.getElementById(id);
+    input.value = parseInt(input.value) + 1;
+}
+
+function decreaseQty(id) {
+    const input = document.getElementById(id);
+    if (parseInt(input.value) > 0) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+</script>
+{% endblock content %}

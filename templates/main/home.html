@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Pesanan Rapat</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8 px-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white border-b border-gray-200 px-8 py-6 mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Pesanan Rapat</h1>
+            <p class="text-gray-600 mt-1">Kelola pesanan makanan untuk rapat dengan mudah</p>
+        </div>
+
+        <!-- Buat Rapat Baru -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Buat Rapat Baru</h2>
+            <form method="POST" class="flex gap-3">
+                {% csrf_token %}
+                <input 
+                    type="text" 
+                    name="judul" 
+                    placeholder="Masukkan judul rapat..." 
+                    required
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <button 
+                    type="submit"
+                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition"
+                >
+                    Buat Rapat
+                </button>
+            </form>
+        </div>
+
+        <!-- List Rapat -->
+        <div>
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Daftar Rapat</h2>
+            
+            {% if rapats %}
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for rapat in rapats %}
+                    <div class="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ rapat.judul }}</h3>
+                        <p class="text-sm text-gray-500 mb-3">
+                            {{ rapat.created_at|date:"d M Y H:i" }}
+                        </p>
+                        <p class="text-sm text-gray-600 mb-4">
+                            <span class="font-medium">{{ rapat.pesanans.count }}</span> pesanan
+                        </p>
+                        <a 
+                            href="{% url 'rapat_detail' rapat.slug %}"
+                            class="block w-full text-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition text-sm"
+                        >
+                            Lihat Detail
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="bg-white border border-gray-200 rounded-lg p-12 text-center">
+                    <p class="text-gray-500">Belum ada rapat. Buat rapat pertamamu sekarang!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

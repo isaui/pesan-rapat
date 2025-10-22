@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Hapus Pesanan - {{ rapat.judul }}</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8 px-4">
+    <div class="max-w-2xl mx-auto">
+        <a href="{% url 'rapat_detail' rapat.slug %}" class="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6 font-medium">
+            ← Kembali
+        </a>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-3">Hapus Pesanan?</h1>
+                <p class="text-gray-600">Apakah kamu yakin ingin menghapus pesanan atas nama <span class="font-semibold">{{ pesanan.nama_pemesan }}</span>?</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                <h3 class="font-semibold text-gray-900 mb-3 text-sm">Detail Pesanan:</h3>
+                <div class="space-y-2">
+                    {% for item in pesanan.items.all %}
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                            {{ item.quantity }}x
+                        </span>
+                        <span class="text-gray-700">
+                            {% if item.menu %}
+                                {{ item.menu.nama }}
+                            {% else %}
+                                <span class="italic">{{ item.custom_request }}</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="flex gap-3">
+                    <a href="{% url 'rapat_detail' rapat.slug %}" 
+                       class="flex-1 px-4 py-2 border border-gray-400 hover:bg-gray-50 text-gray-700 font-medium rounded-md transition text-center">
+                        Batal
+                    </a>
+                    <button 
+                        type="submit"
+                        class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition"
+                    >
+                        Ya, Hapus
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
