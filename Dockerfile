@@ -15,9 +15,11 @@ WORKDIR /app
 # Copy installed packages from builder
 COPY --from=builder /root/.local /root/.local
 
+# Make sure scripts are in PATH
+ENV PATH=/root/.local/bin:$PATH
+
 # Copy project files
 COPY . .
-
 
 # Expose port
 EXPOSE 80
