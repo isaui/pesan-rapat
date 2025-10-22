@@ -18,8 +18,6 @@ COPY --from=builder /root/.local /root/.local
 # Copy project files
 COPY . .
 
-# Make sure scripts are in PATH
-ENV PATH=/root/.local/bin:$PATH
 
 # Expose port
 EXPOSE 80
